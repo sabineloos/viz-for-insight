@@ -12,18 +12,18 @@ output:
     theme: yeti
 
 ---
----
+
 This runs through how I got most of my way there in R to the motivation figure presented in "A geospatial data integration framework to rapidly estimate post-disaster damage" by Sabine Loos , Jack Baker, David Lallemant, Nama Budhathoki, Sang-Ho Yun, Jamie McCaughey, Ritika Singh, and Feroz Khan.  
 
----
-```{r flowchart, include=FALSE, out.width="70%"}
+
+```{r flowchart, include=T, out.width="70%"}
 knitr::include_graphics("Fig1_disasterdata_032519.png")
 ```
 
 I knew I needed to show that we have a lot of maps on damage that come out after a disaster. So I scraped the website, ReliefWeb, to download all the maps produced after a disaster.
 
 # Load necessary packages and data
-```{r}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 rm(list=ls(all = T))
 library(ggplot2) # one of the best plotting tools around
 library(dplyr) # to clean and tidy data
