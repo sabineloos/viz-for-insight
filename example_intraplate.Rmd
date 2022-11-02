@@ -1,0 +1,79 @@
+---
+title: "example_intraplate"
+author: "Sabine Loos"
+date: "11/1/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load necessary packages and data
+```{r message=FALSE, warning=FALSE, include=FALSE}
+rm(list=ls(all = T))
+library(ggplot2) # one of the best plotting tools around
+library(dplyr) # to clean and tidy data
+library(scico) # for color palettes (rcolorbrewer is good here too)
+library(reshape2) # for melting a dataframe
+library(forcats) # for reordering factors
+```
+
+Load the data on maps. This data was scraped from Reliefweb on 27 June 2019
+```{r}
+df.scr <- read.csv("data/src_catalog.csv")
+dfmelt.scr <-reshape2::melt(df.scr, value.name = "count", variable.name = "continent")
+```
+
+# Default plot of data
+```{r}
+dfmelt.scr %>%
+ggplot() + geom_col(aes(y = count, fill = Depth, x = continent))
+```
+# Fixing plot
+
+ what is the message
+ who is our audience
+ visual framework
+ clutter
+ colors
+ highlight message
+ final details
+ 
+```{r}
+ggplot(dfmelt.scr) + geom_col(aes(y = count, fill = Depth, x = continent))
+  # who is our audience
+  # what is the message
+  # visual framework
+  # clutter
+  # colors
+  # highlight message
+  # final details
+```
+
+# Fixed plot
+```{r}
+# who is our audience
+# what is the message
+dfmelt.scr %>%
+  # recode_factor(continent, AF = "Africa", EU = "Europe", NA. = "North America", AS = "Asia", IN = "India", SA = "South America") %>%
+  group_by(continent) %>% # grouping by continent
+  mutate(count_tot = sum(count), # adding total count for each continent, replace with summarise if you don't want to keep other cols
+         color_cont = ifelse(continent == "AF", "1", "0")) %>% # adding a color for africa 
+  # highlight message
+ggplot() + geom_col(aes(y = count, fill = color_cont, x = (fct_reorder(continent, count_tot)))) + # reorder by count_tot, color by africa
+  # visual framework
+  coord_flip()+ # flip coordinates so highest count is at the top
+  # colors
+  scale_fill_manual(values = c("1" = "#1623A8", "0" = "#FFE06E"))+ # https://color.adobe.com/create/color-wheel
+  # clutter
+  theme_set(theme_classic())+
+  # final details
+  labs(x = "Number of earthquakes", y = "Continent", title = "Number of earthquakes that occur within a continent", 
+       subtitle = "Data from the U.S. Geological Survey")+
+  scale_x_discrete(expand = c(0,0), labels = rev(c("Africa", "Europe", "North America", "Asia", "India", "South America")))+ 
+  scale_y_continuous(expand = c(0,0))+
+  theme(legend.position = "none")
+  
+```
+
